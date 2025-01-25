@@ -1,17 +1,9 @@
-<script>
-  import Board from "$lib/Board.svelte";
+<script lang="ts">
+  import { Graph } from "$lib/index.js";
 
-  const adjMat = [
-    [1, 0, 1, 0, 1, 0, 1, 1, 0],
-    [1, 0, 0, 1, 1, 0, 1, 0, 0],
-    [0, 1, 1, 0, 1, 0, 0, 1, 0],
-    [1, 0, 1, 0, 1, 0, 0, 1, 0],
-    [1, 0, 0, 1, 1, 0, 1, 1, 0],
-    [0, 1, 0, 1, 0, 1, 1, 0, 0],
-    [1, 0, 1, 0, 1, 0, 1, 0, 0],
-    [0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [1, 0, 0, 0, 1, 1, 0, 1, 0],
-  ];
+  const adjMat: number[][] = Array.from({ length: 16 }, () =>
+    Array.from({ length: 16 }, () => Math.round(Math.random())),
+  );
 </script>
 
-<Board {adjMat}></Board>
+<Graph {adjMat} />

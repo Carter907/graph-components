@@ -1,4 +1,4 @@
 // Reexport your entry components here
-import Board from './Board.svelte'
+import Graph from './Graph.svelte'
 
-export { Board };
+export { Graph };

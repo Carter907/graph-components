@@ -1,23 +1,21 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Node from "./Node.svelte";
+  import Edge from "./Edge.svelte";
 
-  let { adjMat } = $props();
+  let {
+    adjMat,
+  }: {
+    adjMat: number[][];
+  } = $props();
 
   let nodes = $state<{
     [key: number]: { x: number; y: number };
-  }>({
-    0: { x: 0, y: 0 },
-    1: { x: 0, y: 0 },
-    2: { x: 0, y: 0 },
-    3: { x: 0, y: 0 },
-    4: { x: 0, y: 0 },
-    5: { x: 0, y: 0 },
-    6: { x: 0, y: 0 },
-    7: { x: 0, y: 0 },
-    8: { x: 0, y: 0 },
-  });
-  let cnts = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  }>({});
+  for (let i = 0; i < adjMat.length; i++) {
+    nodes[i] = { x: 0, y: 0 };
+  }
+  let cnts: number[] = Array.from({ length: adjMat.length }, (_, i) => i);
   for (let i = cnts.length - 1; i > 0; i--) {
     // Generate a random index between 0 and i
     const j = Math.floor(Math.random() * (i + 1));
@@ -32,8 +30,8 @@
   });
 
   let boardConfig = $derived({
-    squareWidth: windowDimensions.width / 3,
-    squareHeight: windowDimensions.height / 3,
+    squareWidth: windowDimensions.width / Math.sqrt(adjMat.length),
+    squareHeight: windowDimensions.height / Math.sqrt(adjMat.length),
   });
   let nodeConfig = $derived({
     radius: Math.min(boardConfig.squareHeight, boardConfig.squareWidth) * 0.25,
@@ -44,8 +42,8 @@
     initNodes();
   });
   function initNodes() {
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
+    for (let i = 0; i < Math.sqrt(adjMat.length); i++) {
+      for (let j = 0; j < Math.sqrt(adjMat.length); j++) {
         const cx =
           nodeConfig.radius +
           i * boardConfig.squareWidth +
@@ -64,7 +62,7 @@
 </script>
 
 <svg viewBox="0 0 {windowDimensions.width} {windowDimensions.height}">
-  {#each [0, 1, 2, 3, 4, 5, 6, 7, 8] as key}
+  {#each Array.from({ length: adjMat.length }, (_, i) => i) as key}
     <Node
       r={nodeConfig.radius}
       cx={nodes[key].x}
@@ -73,14 +71,18 @@
     ></Node>
   {/each}
 
-  {#each [0, 1, 2, 3, 4, 5, 6, 7, 8] as i}
-    {#each [0, 1, 2, 3, 4, 5, 6, 7, 8] as j}
-      {#if adjMat[i][j] == 1}
-        {@const x1 = Math.floor(nodes[i]!!.x)}
-        {@const y1 = Math.floor(nodes[i]!!.y)}
-        {@const x2 = Math.floor(nodes[j]!!.x)}
-        {@const y2 = Math.floor(nodes[j]!!.y)}
-        <line {x1} {x2} {y1} {y2} stroke="blue" stroke-width="4"></line>
+  {#each adjMat as row, i}
+    {#each row as ele, j}
+      {#if ele == 1}
+        {@const node1 = {
+          x: Math.floor(nodes[i]!!.x),
+          y: Math.floor(nodes[i]!!.y),
+        }}
+        {@const node2 = {
+          x: Math.floor(nodes[j]!!.x),
+          y: Math.floor(nodes[j]!!.y),
+        }}
+        <Edge {node1} {node2}></Edge>
       {/if}
     {/each}
   {/each}
